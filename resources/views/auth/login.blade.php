@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,8 @@
             box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
             padding: 3%;
             margin-top: 13%;
-            max-width: 30%; /* Set max-width */
+            max-width: 30%;
+            /* Set max-width */
             margin-left: auto;
             margin-right: auto;
         }
@@ -48,12 +50,12 @@
             box-sizing: border-box;
         }
 
-        .remember-checkbox{
+        .remember-checkbox {
             display: flex;
             align-items: center;
         }
 
-        .remember-checkbox input{
+        .remember-checkbox input {
             width: 20px;
             padding-right: 4%;
             margin-top: 1%;
@@ -61,50 +63,66 @@
         }
 
 
-        .a-link{
+        .a-link {
             color: black;
-            text-decoration : underline;
+            text-decoration: underline;
         }
 
-        .a-link-register{
+        .a-link-register {
             color: black;
-            text-decoration:underline;
+            text-decoration: underline;
         }
 
-        .a-link-register:hover{
+        .a-link-register:hover {
             color: #6e6464;
         }
 
-        .btn-custom{
+        .btn-custom {
             font-size: 14px;
-            border-radius:7%;
-            
+            border-radius: 7%;
+
         }
-
-
     </style>
 </head>
+
 <body>
     <div class="container">
-       
 
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
-        <form action="{{ route("login") }}" method="POST">
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('login') }}" method="POST">
             @csrf
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" class="form-control" name="email" value="{{ old('email') }}"  required>
+                <input type="email" id="email" class="form-control" name="email" autocomplete="off"
+                    value="{{ old('email') }}" required>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" class="form-control" name="password" required>
+                <input type="password" id="password" class="form-control" name="password" autocomplete="off" required>
             </div>
 
             <div class="form-group">
@@ -114,12 +132,12 @@
                 </label>
             </div>
 
-            
+
             <div class="form-group d-flex justify-content-end">
                 <a href="/register" class="mt-2 mr-4 a-link-register">Register</a>
                 <a href="" class="mt-2 mr-4 a-link">Forgot your password? </a>
                 <button type="submit" class="btn btn-dark btn-md btn-custom">LOGIN</button>
-            </div>           
+            </div>
 
         </form>
     </div>
@@ -129,4 +147,5 @@
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

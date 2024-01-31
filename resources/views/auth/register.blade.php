@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,8 @@
             box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
             padding: 3%;
             margin-top: 6%;
-            max-width: 30%; /* Set max-width */
+            max-width: 30%;
+            /* Set max-width */
             margin-left: auto;
             margin-right: auto;
         }
@@ -48,70 +50,84 @@
             box-sizing: border-box;
         }
 
-        .a-link{
+        .a-link {
             color: black;
-            text-decoration : underline;
+            text-decoration: underline;
         }
 
-        .a-link:hover{
+        .a-link:hover {
             color: #6e6464;
         }
 
-        .btn-custom{
+        .btn-custom {
             font-size: 14px;
-            border-radius:7%;
+            border-radius: 7%;
         }
-
     </style>
 </head>
+
 <body>
     <div class="container">
-       
 
-        @if(session('success'))
+
+        @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
-        <form action="{{ route('register') }}" method="POST">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('register') }}">
             @csrf
 
 
             <div class="form-group">
                 <label for="fname">First Name</label>
-                <input type="text" id="fname" class="form-control" name="fname" value="{{ old('fname') }}" required autofocus>
+                <input type="text" id="fname" class="form-control" name="fname" autocomplete="off" value="{{ old('fname') }}"
+                    required autofocus>
             </div>
 
             <div class="form-group">
                 <label for="lname">Last Name</label>
-                <input type="text" id="lname" class="form-control" name="lname" value="{{ old('lname') }}" required>
+                <input type="text" id="lname" class="form-control" name="lname" autocomplete="off" value="{{ old('lname') }}"
+                    required>
             </div>
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email"  id="email" class="form-control" name="email" value="{{ old('email') }}"  required>
+                <input type="email" id="email" class="form-control" name="email" autocomplete="off" value="{{ old('email') }}"
+                    required>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" class="form-control" name="password" required>
+                <input type="password" id="password" class="form-control" name="password" autocomplete="off" required>
             </div>
 
             <div class="form-group">
                 <label for="password_confirmation">Confirm Password</label>
-                <input type="password" id="password_confirmation" class="form-control" name="password_confirmation" required>
+                <input type="password" id="password_confirmation" class="form-control" autocomplete="off" name="password_confirmation"
+                    required>
             </div>
 
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="number" id="phone" class="form-control" name="phone" required>
+                <input type="number" id="phone" class="form-control" name="phone" autocomplete="off" required>
             </div>
-            
+
             <div class="d-flex justify-content-end ">
                 <a href="/login" class="mt-2 mr-4 a-link">Already registered? </a>
                 <button type="submit" class="btn btn-dark btn-md btn-custom">REGISTER</button>
-            </div>           
+            </div>
 
             {{-- <button type="submit" class="btn btn-primary btn-block">Register</button> --}}
         </form>
@@ -121,4 +137,5 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
