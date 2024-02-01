@@ -1,10 +1,14 @@
 <?php
 
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\IssuedBookController;
+use App\Http\Controllers\ManageStudentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SignUpController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Panels\AdminController;
 use App\Http\Controllers\Panels\StudentController;
+
 use Illuminate\Support\Facades\Facade;
 /*
 |--------------------------------------------------------------------------
@@ -29,12 +33,35 @@ Route::post('/register', [SignUpController::class, 'register']);
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
+Route::post('/logout', [LoginController::class,'logout'])->name('logout');
 
 ////Routes for Admin Panel
 Route::get('/adminpanel', [AdminController::class, 'index'])->name('adminpanel');
 
 ////Routes for Student Panel
-Route::get('/studentpanel', [StudentController::class, 'index'])->name('studentpanel');
+Route::group(['middleware' => ['auth']], function(){
+    Route::get('/studentpanel', [StudentController::class, 'index'])->name('studentpanel');
+});
+
+
+//// Routes for books
+Route::get('/manage-books', [BookController::class,'index'])->name('manage.books');
+Route::get('/add-books', [BookController::class,'addBook'])->name('add.book');
+Route::post('/create-new-book',[BookController::class,'storeBook'])->name('store.book');
+Route::get('/delete-book/{id}', [BookController::class,'deleteBook'])->name('delete.book');
+Route::get('/edit-book/{id}', [BookController::class,'editBook'])->name('edit.book');
+
+/// Routes for manage student 
+Route::get('/manage-students', [ManageStudentController::class,'index'])->name('manage.students');
+Route::get('/add-student', [ManageStudentController::class,'addStudent'])->name('add.student');
+Route::post('/create-new-student', [ManageStudentController::class,'storeStudent'])->name('store.student');
+Route::get('/delete-student/{id}', [ManageStudentController::class,'deleteStudent'])->name('delete.student');
+Route::get('/edit-student/{id}', [ManageStudentController::class,'editStudent'])->name('edit.student');
+Route::put('/edit-student/{id}', [ManageStudentController::class,'storeUpdatedStudent'])->name('store.updated.student');
+Route::get('/issue-book/{id}', [ManageStudentController::class,'issueBook'])->name('issue.book');
+
+/// Routes for issued books
+Route::get('/manage-issued-book', [IssuedBookController::class,'index'])->name('manage.issued.books');
 
 Route::get('/test-mongodb-connection', function () {
     try {

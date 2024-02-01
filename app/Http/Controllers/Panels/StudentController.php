@@ -9,6 +9,7 @@ class StudentController extends Controller
 {
     //
     public function index(){
-        return "Student Panel";
+        $student = auth()->user();
+        return view("student", compact('student'));
     }
 }
