@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Student</title>
+    <title>Manage Books</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
     <style>
@@ -20,7 +20,8 @@
             background-color: #cdcfd2;
             overflow-x: hidden;
             transition: 0.5s;
-            box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;            border-radius: 5%;
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+            border-radius: 5%;
         }
 
         .sidenav a {
@@ -92,28 +93,37 @@
                                             <th>Total Inventory</th>
                                             <th>Issued Copies</th>
                                             <th>Price</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($books as $book)
                                             <tr>
-                                                <td><img src="{{ asset('storage/'. $book['photo']) }}" alt="{{ $book['name'] }}" style="max-width: 50px;"></td>
+                                                <td><img src="{{ asset('storage/' . $book['photo']) }}"
+                                                        alt="{{ $book['name'] }}" style="max-width: 50px;"></td>
                                                 <td>{{ $book['name'] }}</td>
                                                 <td>{{ $book['author'] }}</td>
                                                 <td>{{ $book['description'] }}</td>
                                                 <td>{{ $book['status'] }}</td>
                                                 <td>{{ $book['total_inventory'] }}</td>
                                                 <td>{{ $book['issued_copies'] }}</td>
-                                                <td><span style="display: inline-block;">Rs. </span>{{ $book['price'] }}</td>
-                                                
+                                                <td><span style="display: inline-block;">Rs.
+                                                    </span>{{ $book['price'] }}</td>
+
                                                 <td>
-                                                    <a href="{{ route('delete.book', ['id' => $book['_id']]) }}"
-                                                        class="btn btn-danger btn-sm">Delete</a>
-                                                    <a href="{{ route('edit.book', ['id' => $book['_id']]) }}"
-                                                        class="btn btn-warning btn-sm ml-1">Edit</a>
+                                                    <div class="d-flex align-items-center justify-content-between">
+
+                                                        <button class="btn btn-danger btn-sm"
+                                                            onclick="confirmDelete('{{ $book['_id'] }}')">Delete
+                                                        </button>
+
+                                                        <a href="{{ route('edit.book', ['id' => $book['_id']]) }}"
+                                                            class="btn btn-warning btn-sm ml-1">Edit</a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach
+                                       
                                     </tbody>
                                 </table>
                             </div>
@@ -124,6 +134,19 @@
             </div>
         </div>
     </div>
+
+    <div class="d-flex justify-content-center align-items-center">
+        {{ $books->links() }}
+    </div>
+
+    <script>
+        function confirmDelete(bookId) {
+            var result = confirm("Are you sure you want to delete this book?");
+            if (result) {
+                window.location.href = "{{ url('delete-book') }}/" + bookId;
+            }
+        }
+    </script>
 
     <!-- Success Modal -->
     @if (session('success'))
@@ -188,5 +211,6 @@
     @endif
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
 </body>

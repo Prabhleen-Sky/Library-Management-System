@@ -50,6 +50,7 @@ Route::get('/add-books', [BookController::class,'addBook'])->name('add.book');
 Route::post('/create-new-book',[BookController::class,'storeBook'])->name('store.book');
 Route::get('/delete-book/{id}', [BookController::class,'deleteBook'])->name('delete.book');
 Route::get('/edit-book/{id}', [BookController::class,'editBook'])->name('edit.book');
+Route::put('/edit-book/{id}', [BookController::class,'storeUpdatedBook'])->name('store.updated.book');
 
 /// Routes for manage student 
 Route::get('/manage-students', [ManageStudentController::class,'index'])->name('manage.students');
@@ -62,6 +63,8 @@ Route::get('/issue-book/{id}', [ManageStudentController::class,'issueBook'])->na
 
 /// Routes for issued books
 Route::get('/manage-issued-book', [IssuedBookController::class,'index'])->name('manage.issued.books');
+Route::get('/issue-book',[IssuedBookController::class,'issueBook'])->name('issue.book.id');
+Route::post('/issue-book',[IssuedBookController::class,'storeIssuedBook'])->name('store.issued.book');
 
 Route::get('/test-mongodb-connection', function () {
     try {

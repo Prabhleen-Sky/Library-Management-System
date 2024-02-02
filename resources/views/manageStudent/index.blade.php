@@ -20,7 +20,8 @@
             background-color: #cdcfd2;
             overflow-x: hidden;
             transition: 0.5s;
-            box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;            border-radius: 5%;
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+            border-radius: 5%;
         }
 
         .sidenav a {
@@ -90,6 +91,7 @@
                                             <th>Email</th>
                                             <th>Phone</th>
                                             <th>Status</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -102,8 +104,10 @@
                                                 <td>{{ $student['phone'] }}</td>
                                                 <td>{{ $student['status'] }}</td>
                                                 <td>
-                                                    <a href="{{ route('delete.student', ['id' => $student['_id']]) }}"
-                                                        class="btn btn-danger btn-sm">Delete</a>
+                                                    <button class="btn btn-danger btn-sm"
+                                                        onclick="confirmDelete('{{ $student['_id'] }}')">Delete </button>
+                                                    {{-- <a href="{{ route('delete.student', ['id' => $student['_id']]) }}"
+                                                        class="btn btn-danger btn-sm">Delete</a> --}}
                                                     <a href="{{ route('edit.student', ['id' => $student['_id']]) }}"
                                                         class="btn btn-warning btn-sm ml-1">Edit</a>
                                                     <a href="{{ route('issue.book', ['id' => $student['_id']]) }}"
@@ -121,6 +125,15 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function confirmDelete(userId) {
+            var result = confirm("Are you sure you want to delete this user?");
+            if (result) {
+                window.location.href = "{{ url('delete-student') }}/" + userId;
+            }
+        }
+    </script>
 
     <!-- Success Modal -->
     @if (session('success'))
