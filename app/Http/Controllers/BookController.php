@@ -40,7 +40,7 @@ class BookController extends Controller
                 'name.regex' => 'Book name must contain only alphabets or spaces',
                 'author.regex' => 'Author name must contain only alphabets or spaces',
                 'description.regex' => 'Description must not contain any html attribute',
-                'total_inventory.between' => 'Price must be between :min and :max',
+                'total_inventory.between' => 'Total inventory must be between :min and :max',
                 'price.between' => 'Price must be between :min and :max',
                 'photo.image' => 'photo must be an image',
                 'photo.mimes' => 'Photo must have one of the following extensions: jpeg, png, jpg, gif',
@@ -104,7 +104,7 @@ class BookController extends Controller
             'name.regex' => 'Book name must contain only alphabets or spaces',
             'author.regex' => 'Author name must contain only alphabets or spaces',
             'description.regex' => 'Description must not contain any html attribute',
-            'total_inventory.between' => 'Price must be between :min and :max',
+            'total_inventory.between' => 'Total inventory must be between :min and :max',
             'price.between' => 'Price must be between :min and :max',
             'photo.image' => 'photo must be an image',
             'photo.mimes' => 'Photo must have one of the following extensions: jpeg, png, jpg, gif',
@@ -128,6 +128,8 @@ class BookController extends Controller
 
         if($data['issued_copies'] == $data['total_inventory']){
             $book['status'] = 'unavailable';
+        }else{
+            $book['status'] = 'available';
         }
 
         $photoPath = null;
@@ -147,6 +149,7 @@ class BookController extends Controller
                 'price' => $data['price'],
                 'issued_copies' => $data['issued_copies']
             ]);
+            $book->save();
         }
 
         return redirect('manage-books')->with('success', 'Book Updated successfully');

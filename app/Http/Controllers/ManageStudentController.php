@@ -113,6 +113,7 @@ class ManageStudentController extends Controller
         }
 
         $student = User::findOrFail($id);
+        // \Log::info($student);
 
         if(!$student){
             return redirect()->back()->with('error', 'User not found.');
