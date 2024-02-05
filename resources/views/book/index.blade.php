@@ -178,7 +178,7 @@
     @endif
 
     <!-- Error Modal -->
-    @if ($errors->any())
+    @if (session('error') || $errors->any())
         <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -189,6 +189,7 @@
                     </div>
                     <div class="modal-body">
                         <ul>
+                            {{ session('error') }}
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach

@@ -51,6 +51,21 @@ return [
     */
 
     'channels' => [
+        'library' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/library.log'),
+            'level' => 'debug',
+            'days' => '7'
+
+        ],
+
+        'library_exception' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/library_exceptions.log'),
+            'level' => 'error',
+            'days' => 7,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

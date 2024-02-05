@@ -110,7 +110,7 @@
                                                         class="btn btn-danger btn-sm">Delete</a> --}}
                                                     <a href="{{ route('edit.student', ['id' => $student['_id']]) }}"
                                                         class="btn btn-warning btn-sm ml-1">Edit</a>
-                                                    <a href="{{ route('issue.book', ['id' => $student['_id']]) }}"
+                                                    <a href="{{ route('issue.book.id', ['id' => $student['_id']]) }}"
                                                         class="btn btn-primary btn-sm ml-1">Issue Book</a>
                                                 </td>
                                             </tr>
@@ -165,7 +165,7 @@
     @endif
 
     <!-- Error Modal -->
-    @if ($errors->any())
+    @if (session('error') || $errors->any())
         <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -175,6 +175,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        {{ session('error') }}
                         <ul>
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>

@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class Handler extends ExceptionHandler
 {
@@ -46,5 +48,23 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Report or log an exception.
+     *
+     * @param  \Exception  $exception
+     * @return void
+     */
+    public function report(Throwable $exception)
+    {
+        // Log the exception using Laravel's logging facilities
+        // \Log::error($exception);
+
+        Log::channel('library_exception')->error($exception->getMessage());
+
+        // parent::report($exception);
+
+        parent::report($exception);
     }
 }

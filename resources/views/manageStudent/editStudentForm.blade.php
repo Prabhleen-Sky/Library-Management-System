@@ -26,9 +26,10 @@
             </div>
         @endif
 
-        @if ($errors->any())
+        @if (session('error') || $errors->any())
             <div class="alert alert-danger">
                 <ul>
+                    {{ session('error') }}
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach

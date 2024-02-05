@@ -10,17 +10,30 @@ use Illuminate\Support\Facades\Log;
 class IssuedBookController extends Controller
 {
     //
-    public function index(){
-        $issuedBooks = BookIssued::with(['book', 'user'])->get();
-        return view("issueBook.index", compact('issuedBooks'));
+    public function index()
+    {
+        try {
+            $issuedBooks = BookIssued::with(['book', 'user'])->get();
+            return view("issueBook.index", compact('issuedBooks'));
+        } catch (\Exception $e) {
+           return report($e);
+        }
+        // $issuedBooks = BookIssued::with(['book', 'user'])->get();
+        // return view("issueBook.index", compact('issuedBooks'));
     }
 
-    public function issueBook(){
+    public function issueBook()
+    {
         return view("issueBook.issueBookForm");
     }
 
-    public function storeIssuedBook(Request $request){
-        $data = $request->all();
+    public function storeIssuedBook(Request $request)
+    {
+        try {
+            $data = $request->all();
+        } catch (\Exception $e) {
+            report($e);
+        }
 
         $validator = Validator::make($data, [
             'user_id' => 'required',
@@ -31,9 +44,14 @@ class IssuedBookController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $issueBook = BookIssued::create($data);
+        try {
+            $issueBook = BookIssued::create($data);
+        }catch (\Exception $e) {
+            report($e);
+            return redirect()->back()->with('error', 'An error occurred while creating the BookIssued record.');
+        }
 
-        return redirect('manage-issued-book')->with('success','Book Issued Successfully');
+        return redirect('manage-issued-book')->with('success', 'Book Issued Successfully');
 
     }
 }

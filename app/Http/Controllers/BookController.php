@@ -13,8 +13,12 @@ class BookController extends Controller
     //
     public function index()
     {
-        $books = Book::paginate(4);
-        return view("book.index", ['books' => $books]);
+        try {
+            $books = Book::paginate(4);
+            return view("book.index", ['books' => $books]);
+        } catch (\Exception $e) {
+            report($e);
+        }
     }
 
     public function addBook()
@@ -24,7 +28,11 @@ class BookController extends Controller
 
     public function storeBook(Request $request)
     {
-        $data = $request->all();
+        try {
+            $data = $request->all();
+        } catch (\Exception $e) {
+            report($e);
+        }
 
         $validator = Validator::make(
             $data,
@@ -52,45 +60,72 @@ class BookController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoFile = $request->file('photo');
-            // dd($photoFile);
-            $photoPath = $photoFile->store('images', 'public');
-            // dd($photoPath);
+        try {
+
+            $photoPath = null;
+            if ($request->hasFile('photo')) {
+                $photoFile = $request->file('photo');
+                // dd($photoFile);
+                try {
+                    $photoPath = $photoFile->store('images', 'public');
+                    // dd($photoPath);
+                } catch (\Exception $e) {
+                    report($e);
+                    return redirect('manage-books')->with('error', 'Failed to upload photo');
+                }
+            }
+
+            Log::info('photo' . $photoPath);
+
+            $book = Book::create([
+                'name' => $data['name'],
+                'author' => $data['author'],
+                'description' => $data['description'],
+                'total_inventory' => $data['total_inventory'],
+                'price' => $data['price'],
+                'photo' => $photoPath,
+                'status' => 'available',
+                'issued_copies' => '0'
+            ]);
+
+            return redirect('manage-books')->with('success', 'Book added successfully');
+        } catch (\Exception $e) {
+            report($e);
+            return redirect('manage-books')->with('error', 'Failed to add book');
         }
-
-        Log::info('photo' . $photoPath);
-
-        $book = Book::create([
-            'name' => $data['name'],
-            'author' => $data['author'],
-            'description' => $data['description'],
-            'total_inventory' => $data['total_inventory'],
-            'price' => $data['price'],
-            'photo' => $photoPath,
-            'status' => 'available',
-            'issued_copies' => '0'
-        ]);
-
-        return redirect('manage-books')->with('success', 'Book added successfully');
     }
 
     public function editBook($id)
     {
-        $book = Book::find($id);
-        return view('book.editBookForm', ['book' => $book]);
+        try {
+            $book = Book::find($id);
+            if (!$book) {
+                return redirect('manage-books')->with('error', 'Book not found');
+            }
+            return view('book.editBookForm', ['book' => $book]);
+        } catch (\Exception $e) {
+            report($e);
+            return redirect('manage-books')->with('error', 'Failed to edit book');
+        }
     }
 
     public function storeUpdatedBook(Request $request, $id)
     {
-        $book = Book::find($id);
+        try {
+            $book = Book::find($id);
 
-        if (!$book) {
-            return redirect()->back()->withError('error', 'Book not found');
+            if (!$book) {
+                return redirect()->back()->withError('error', 'Book not found');
+            }
+        } catch (\Exception $e) {
+            report($e);
         }
 
-        $data = $request->all();
+        try {
+            $data = $request->all();
+        } catch (\Exception $e) {
+            report($e);
+        }
 
         $validator = Validator::make($data, [
             'name' => ['required', 'string', 'max:100', 'regex:/^[a-zA-Z\s]+$/'],
@@ -126,9 +161,9 @@ class BookController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        if($data['issued_copies'] == $data['total_inventory']){
+        if ($data['issued_copies'] == $data['total_inventory']) {
             $book['status'] = 'unavailable';
-        }else{
+        } else {
             $book['status'] = 'available';
         }
 
@@ -136,9 +171,17 @@ class BookController extends Controller
 
         if ($request->hasFile('photo')) {
             $photoFile = $request->file('photo');
-            $photoPath = $photoFile->store('images', 'public');
+            try {
+                $photoPath = $photoFile->store('images', 'public');
+            } catch (\Exception $e) {
+                report($e);
+            }
             $data['photo'] = $photoPath;
-            $book->update($data);
+            try{
+                $book->update($data);
+            }catch (\Exception $e) {
+                report($e);
+            }
             // Log::info($photoPath.'when pic coming');
         } else {
             $book->fill([
@@ -158,14 +201,20 @@ class BookController extends Controller
 
     public function deleteBook($id)
     {
-        $book = Book::find($id);
+        try{
 
-        if (!$book) {
-            return redirect('manage-books')->with('error', 'Book not found');
+            $book = Book::find($id);
+            
+            if (!$book) {
+                return redirect('manage-books')->with('error', 'Book not found');
+            }
+            
+            $book->delete();
+            
+            return redirect('manage-books')->with('success', 'Book deleted successfully');
+        }catch(\Exception $e) {
+            report($e);
+            return redirect('manage-books')->with('error', 'Failed to delete book');
         }
-
-        $book->delete();
-
-        return redirect('manage-books')->with('success', 'Book deleted successfully');
     }
 }

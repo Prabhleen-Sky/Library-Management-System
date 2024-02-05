@@ -15,9 +15,14 @@ class ManageStudentController extends Controller
     //
     public function index()
     {
-        $students = DB::collection('users')->where('user_role', 'student')->get();
-        // Log::info($students);
-        return view("manageStudent.index", ['students' => $students]);
+        try {
+
+            $students = DB::collection('users')->where('user_role', 'student')->get();
+            // Log::info($students);
+            return view("manageStudent.index", ['students' => $students]);
+        } catch (\Exception $e) {
+            report($e);
+        }
     }
 
     public function addStudent()
@@ -27,7 +32,11 @@ class ManageStudentController extends Controller
 
     public function storeStudent(Request $request)
     {
-        $data = $request->all();
+        try {
+            $data = $request->all();
+        } catch (\Exception $e) {
+            report($e);
+        }
 
         $validator = Validator::make(
             $data,
@@ -59,29 +68,43 @@ class ManageStudentController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $user = User::create([
-            'fname' => $data['fname'],
-            'lname' => $data['lname'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-            'phone' => $data['phone'],
-            'status' => 'active',
-            'user_role' => 'student'
-        ]);
+        try {
+            $user = User::create([
+                'fname' => $data['fname'],
+                'lname' => $data['lname'],
+                'email' => $data['email'],
+                'password' => bcrypt($data['password']),
+                'phone' => $data['phone'],
+                'status' => 'active',
+                'user_role' => 'student'
+            ]);
 
-        return redirect('manage-students')->with('success', 'User added successfully');
+            return redirect('manage-students')->with('success', 'User added successfully');
+        } catch (\Exception $e) {
+            report($e);
+            return redirect('manage-books')->with('error', 'Failed to add student');
+        }
 
     }
 
     public function editStudent($id)
     {
-        $student = User::findOrFail($id);
-        return view("manageStudent.editStudentForm", ["student" => $student]);
+        try {
+            $student = User::findOrFail($id);
+            return view("manageStudent.editStudentForm", ["student" => $student]);
+        } catch (\Exception $e) {
+            report($e);
+            return redirect('manage-books')->with('error', 'Failed to edit student : ' . $e->getMessage());
+        }
     }
 
     public function storeUpdatedStudent(Request $request, $id)
     {
-        $data = $request->all();
+        try {
+            $data = $request->all();
+        } catch (\Exception $e) {
+            report($e);
+        }
 
         $validator = Validator::make(
             $data,
@@ -93,7 +116,7 @@ class ManageStudentController extends Controller
                     'string',
                     'email',
                     'max:50',
-                    'unique:users,email,'.$id.',_id', // Ignore current user with this ID
+                    'unique:users,email,' . $id . ',_id', // Ignore current user with this ID
                     function ($attribute, $value, $fail) {
                         if (!(filter_var($value, FILTER_VALIDATE_EMAIL) && Str::endsWith($value, '.com'))) {
                             $fail('The ' . $attribute . ' must be a valid email address ending with ".com".');
@@ -112,30 +135,45 @@ class ManageStudentController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $student = User::findOrFail($id);
-        // \Log::info($student);
+        try {
 
-        if(!$student){
-            return redirect()->back()->with('error', 'User not found.');
+            $student = User::findOrFail($id);
+            // \Log::info($student);
+
+            if (!$student) {
+                return redirect()->back()->with('error', 'User not found.');
+            }
+           
+            try{
+                $student->update($data);
+                return redirect('manage-students')->with('success', 'User updated successfully');
+            }catch (\Exception $e) {
+                report($e);
+                return redirect('manage-students')->with('Failed to update User');
+            }
+        } catch (\Exception $e) {
+            report($e);
         }
-
-        $student->update($data);
-
-        return redirect('manage-students')->with('success','User updated successfully');
 
     }
 
     public function deleteStudent($id)
     {
-        $user = User::find($id);
+        try{
 
-        if (!$user) {
-            return redirect("manage-students")->with("error", "User not found");
+            $user = User::find($id);
+            
+            if (!$user) {
+                return redirect("manage-students")->with("error", "User not found");
+            }
+            
+            $user->delete();
+            
+            return redirect("manage-students")->with("success", "User deleted successfully");
+        }catch(\Exception $e) {
+           report($e);
+           return redirect("manage-students")->with("error", "Failed to delete User");
         }
-
-        $user->delete();
-
-        return redirect("manage-students")->with("success", "User deleted successfully");
     }
 
     public function issueBook()
