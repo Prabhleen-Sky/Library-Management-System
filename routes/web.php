@@ -61,12 +61,15 @@ Route::middleware(['auth', 'checkUserRole'])->group(function () {
     Route::get('/delete-student/{id}', [ManageStudentController::class, 'deleteStudent'])->name('delete.student');
     Route::get('/edit-student/{id}', [ManageStudentController::class, 'editStudent'])->name('edit.student');
     Route::put('/edit-student/{id}', [ManageStudentController::class, 'storeUpdatedStudent'])->name('store.updated.student');
-    Route::get('/issue-book/{id}', [ManageStudentController::class, 'issueBook'])->name('issue.book');
+    Route::get('/issue-book-student', [ManageStudentController::class, 'issueBook'])->name('issue.book');
+
 
     /// Routes for issued books
     Route::get('/manage-issued-book', [IssuedBookController::class, 'index'])->name('manage.issued.books');
     Route::get('/issue-book', [IssuedBookController::class, 'issueBook'])->name('issue.book.id');
     Route::post('/issue-book', [IssuedBookController::class, 'storeIssuedBook'])->name('store.issued.book');
+    Route::get('/check-issued-book', [IssuedBookController::class,'checkIssuedBook']);
+    Route::get('/delete-issued-book', [IssuedBookController::class,'deleteIssuedBook']);
 });
 
 

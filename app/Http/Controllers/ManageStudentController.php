@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\Book;
+use App\Models\BookIssued;
 use Illuminate\Validation\Rule;
 
 class ManageStudentController extends Controller
@@ -19,7 +21,8 @@ class ManageStudentController extends Controller
 
             $students = DB::collection('users')->where('user_role', 'student')->get();
             // Log::info($students);
-            return view("manageStudent.index", ['students' => $students]);
+            $books = Book::all();
+            return view("manageStudent.index", ['students' => $students, 'books' => $books]);
         } catch (\Exception $e) {
             report($e);
         }
@@ -176,8 +179,22 @@ class ManageStudentController extends Controller
         }
     }
 
-    public function issueBook()
+    public function issueBook(Request $request)
     {
-        return "issue book";
+        $studentId = $request->input('studentId');
+        \Log::info(''. $studentId);
+        $bookId = $request->input('bookId');
+        
+        try {
+            $issueBook = BookIssued::create([
+                'user_id' => $studentId,
+                'book_id' => $bookId,
+            ]);
+        }catch (\Exception $e) {
+            report($e);
+            return redirect()->back()->with('error', 'An error occurred while creating the BookIssued record.');
+        }
+
+        return response()->json(['success' => true]);
     }
 }

@@ -16,7 +16,7 @@ class IssuedBookController extends Controller
             $issuedBooks = BookIssued::with(['book', 'user'])->get();
             return view("issueBook.index", compact('issuedBooks'));
         } catch (\Exception $e) {
-           return report($e);
+            return report($e);
         }
         // $issuedBooks = BookIssued::with(['book', 'user'])->get();
         // return view("issueBook.index", compact('issuedBooks'));
@@ -46,12 +46,45 @@ class IssuedBookController extends Controller
 
         try {
             $issueBook = BookIssued::create($data);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             report($e);
             return redirect()->back()->with('error', 'An error occurred while creating the BookIssued record.');
         }
 
         return redirect('manage-issued-book')->with('success', 'Book Issued Successfully');
 
+    }
+
+    public function checkIssuedBook(Request $request)
+    {
+        $studentId = $request->input('studentId');
+        $bookId = $request->input('bookId');
+
+        $checkIssuedBook = BookIssued::where('user_id', $studentId)
+            ->where('book_id', $bookId)
+            ->first();
+
+        if ($checkIssuedBook) {
+            return response()->json(['alreadyIssued' => true]);
+        } else {
+            return response()->json(['alreadyIssued' => false]);
+        }
+    }
+
+    public function deleteIssuedBook(Request $request)
+    {
+        $studentId = $request->input('studentId');
+        $bookId = $request->input('bookId');
+
+        try {
+            $deleted = BookIssued::where('user_id', $studentId)
+                ->where('book_id', $bookId)
+                ->delete();
+        } catch (\Exception $e) {
+            report($e);
+            return response()->json(['error' => 'An error occurred while deleting the BookIssued record.'], 500);
+        }
+
+        return response()->json(['success' => true]);
     }
 }
